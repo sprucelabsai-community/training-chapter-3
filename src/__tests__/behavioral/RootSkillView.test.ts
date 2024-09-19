@@ -6,8 +6,8 @@ import {
 import { fake } from '@sprucelabs/spruce-test-fixtures'
 import { AbstractSpruceFixtureTest } from '@sprucelabs/spruce-test-fixtures'
 import { test } from '@sprucelabs/test-utils'
+import FeedbackCardViewController from '../../feedback/FeedbackCard.vc'
 import RootSkillViewController from '../../skillViewControllers/Root.svc'
-import FeedbackCardViewController from '../../viewControllers/FeedbackCard.vc'
 
 @fake.login()
 export default class RootSkillViewTest extends AbstractSpruceFixtureTest {

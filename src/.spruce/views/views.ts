@@ -1,5 +1,5 @@
 import RootSkillViewController from '../../skillViewControllers/Root.svc'
-import FeedbackCardViewController from '../../viewControllers/FeedbackCard.vc'
+import FeedbackCardViewController from '../../feedback/FeedbackCard.vc'
 
 import '@sprucelabs/heartwood-view-controllers'
 

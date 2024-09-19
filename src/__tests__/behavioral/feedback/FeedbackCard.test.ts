@@ -2,7 +2,7 @@ import { formAssert, interactor } from '@sprucelabs/heartwood-view-controllers'
 import { eventFaker, fake } from '@sprucelabs/spruce-test-fixtures'
 import { AbstractSpruceFixtureTest } from '@sprucelabs/spruce-test-fixtures'
 import { assert, generateId, test } from '@sprucelabs/test-utils'
-import FeedbackCardViewController from '../../../viewControllers/FeedbackCard.vc'
+import FeedbackCardViewController from '../../../feedback/FeedbackCard.vc'
 
 @fake.login()
 export default class FeedbackCardTest extends AbstractSpruceFixtureTest {
