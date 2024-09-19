@@ -5,10 +5,10 @@ import {
 } from '@sprucelabs/heartwood-view-controllers'
 import { eventFaker, fake } from '@sprucelabs/spruce-test-fixtures'
 import { AbstractSpruceFixtureTest } from '@sprucelabs/spruce-test-fixtures'
-import { assert, generateId, test } from '@sprucelabs/test-utils'
+import { assert, test } from '@sprucelabs/test-utils'
 import FeedbackCardViewController from '../../feedback/FeedbackCard.vc'
 import RootSkillViewController from '../../skillViewControllers/Root.svc'
-import { SpyFeedbackCard } from './feedback/SpyFeedbackCard'
+import SpyFeedbackCard from './feedback/SpyFeedbackCard'
 
 @fake.login()
 export default class RootSkillViewTest extends AbstractSpruceFixtureTest {
@@ -67,14 +67,14 @@ export default class RootSkillViewTest extends AbstractSpruceFixtureTest {
         const { feedbackCardVc, dialogVc } =
             await this.clickFeedbackAndAssertDialog()
 
-        await feedbackCardVc.getFormVc().setValue('feedback', generateId())
+        await feedbackCardVc.fillOutFeedback()
 
         assert.isTrue(
             dialogVc.getIsVisible(),
             `You hid your dialog too soon! Do it after submit!`
         )
 
-        await interactor.submitForm(feedbackCardVc.getFormVc())
+        await feedbackCardVc.submit()
 
         assert.isFalse(
             dialogVc.getIsVisible(),

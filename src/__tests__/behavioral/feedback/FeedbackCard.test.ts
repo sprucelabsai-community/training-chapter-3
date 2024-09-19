@@ -1,12 +1,8 @@
-import {
-    formAssert,
-    interactor,
-    vcAssert,
-} from '@sprucelabs/heartwood-view-controllers'
+import { formAssert, vcAssert } from '@sprucelabs/heartwood-view-controllers'
 import { eventFaker, fake } from '@sprucelabs/spruce-test-fixtures'
 import { AbstractSpruceFixtureTest } from '@sprucelabs/spruce-test-fixtures'
-import { assert, generateId, test } from '@sprucelabs/test-utils'
-import { SpyFeedbackCard } from './SpyFeedbackCard'
+import { assert, test } from '@sprucelabs/test-utils'
+import SpyFeedbackCard from './SpyFeedbackCard'
 
 @fake.login()
 export default class FeedbackCardTest extends AbstractSpruceFixtureTest {
@@ -92,13 +88,11 @@ export default class FeedbackCardTest extends AbstractSpruceFixtureTest {
     }
 
     private static async submit() {
-        await interactor.submitForm(this.formVc)
+        await this.vc.submit()
     }
 
     private static async fillOutFeedback() {
-        const expected = generateId()
-        await this.formVc.setValue('feedback', expected)
-        return expected
+        return this.vc.fillOutFeedback()
     }
 
     private static get formVc() {
