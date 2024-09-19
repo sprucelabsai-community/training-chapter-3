@@ -3,11 +3,12 @@ import {
     interactor,
     vcAssert,
 } from '@sprucelabs/heartwood-view-controllers'
-import { fake } from '@sprucelabs/spruce-test-fixtures'
+import { eventFaker, fake } from '@sprucelabs/spruce-test-fixtures'
 import { AbstractSpruceFixtureTest } from '@sprucelabs/spruce-test-fixtures'
-import { test } from '@sprucelabs/test-utils'
+import { assert, generateId, test } from '@sprucelabs/test-utils'
 import FeedbackCardViewController from '../../feedback/FeedbackCard.vc'
 import RootSkillViewController from '../../skillViewControllers/Root.svc'
+import { SpyFeedbackCard } from './feedback/SpyFeedbackCard'
 
 @fake.login()
 export default class RootSkillViewTest extends AbstractSpruceFixtureTest {
@@ -16,6 +17,19 @@ export default class RootSkillViewTest extends AbstractSpruceFixtureTest {
     protected static async beforeEach(): Promise<void> {
         await super.beforeEach()
 
+        await eventFaker.on(
+            'eightbitstories.submit-feedback::v2024_09_19',
+            () => {
+                return {
+                    success: true,
+                }
+            }
+        )
+
+        this.views.setController(
+            'eightbitstories.feedback-card',
+            SpyFeedbackCard
+        )
         this.views.setController('eightbitstories.root', SpyRootSkillView)
         this.vc = this.views.Controller(
             'eightbitstories.root',
@@ -45,11 +59,40 @@ export default class RootSkillViewTest extends AbstractSpruceFixtureTest {
 
     @test()
     protected static async clickingFeedbackRendersDialog() {
+        await this.clickFeedbackAndAssertDialog()
+    }
+
+    @test()
+    protected static async submittingFeedbackClosesDialog() {
+        const { feedbackCardVc, dialogVc } =
+            await this.clickFeedbackAndAssertDialog()
+
+        await feedbackCardVc.getFormVc().setValue('feedback', generateId())
+
+        assert.isTrue(
+            dialogVc.getIsVisible(),
+            `You hid your dialog too soon! Do it after submit!`
+        )
+
+        await interactor.submitForm(feedbackCardVc.getFormVc())
+
+        assert.isFalse(
+            dialogVc.getIsVisible(),
+            'You did not hide the form after sumbit!'
+        )
+    }
+
+    private static async clickFeedbackAndAssertDialog() {
         const dialogVc = await vcAssert.assertRendersDialog(this.vc, () =>
             interactor.clickButton(this.cardVc, 'feedback')
         )
 
-        vcAssert.assertRendersAsInstanceOf(dialogVc, FeedbackCardViewController)
+        const feedbackCardVc = vcAssert.assertRendersAsInstanceOf(
+            dialogVc,
+            FeedbackCardViewController
+        )
+
+        return { dialogVc, feedbackCardVc: feedbackCardVc as SpyFeedbackCard }
     }
 
     private static get cardVc() {

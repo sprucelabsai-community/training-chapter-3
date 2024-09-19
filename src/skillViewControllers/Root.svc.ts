@@ -51,9 +51,11 @@ export default class RootSkillViewController extends AbstractSkillViewController
     private async handleClickFeedback() {
         const feedbackCardVc = this.Controller(
             'eightbitstories.feedback-card',
-            {}
+            {
+                onSubmit: () => dialogVc.hide(),
+            }
         )
-        this.renderInDialog(feedbackCardVc.render())
+        const dialogVc = this.renderInDialog(feedbackCardVc.render())
     }
 
     public async getIsLoginRequired() {

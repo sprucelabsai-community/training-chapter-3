@@ -1,24 +1,32 @@
-import { formAssert, interactor } from '@sprucelabs/heartwood-view-controllers'
+import {
+    formAssert,
+    interactor,
+    vcAssert,
+} from '@sprucelabs/heartwood-view-controllers'
 import { eventFaker, fake } from '@sprucelabs/spruce-test-fixtures'
 import { AbstractSpruceFixtureTest } from '@sprucelabs/spruce-test-fixtures'
 import { assert, generateId, test } from '@sprucelabs/test-utils'
-import FeedbackCardViewController from '../../../feedback/FeedbackCard.vc'
+import { SpyFeedbackCard } from './SpyFeedbackCard'
 
 @fake.login()
 export default class FeedbackCardTest extends AbstractSpruceFixtureTest {
     private static vc: SpyFeedbackCard
+    private static wasOnSubmitInvoked: boolean
 
     protected static async beforeEach(): Promise<void> {
         await super.beforeEach()
+
+        this.wasOnSubmitInvoked = false
 
         this.views.setController(
             'eightbitstories.feedback-card',
             SpyFeedbackCard
         )
-        this.vc = this.views.Controller(
-            'eightbitstories.feedback-card',
-            {}
-        ) as SpyFeedbackCard
+        this.vc = this.views.Controller('eightbitstories.feedback-card', {
+            onSubmit: () => {
+                this.wasOnSubmitInvoked = true
+            },
+        }) as SpyFeedbackCard
     }
 
     @test()
@@ -46,30 +54,54 @@ export default class FeedbackCardTest extends AbstractSpruceFixtureTest {
 
     @test()
     protected static async submittingFormEmitsSubmitFeedbackEvent() {
-        let wasHit = false
+        let passedFeedback: string | undefined
+
         await eventFaker.on(
             'eightbitstories.submit-feedback::v2024_09_19',
-            () => {
-                wasHit = true
+            ({ payload }) => {
+                const { feedback } = payload
+                passedFeedback = feedback
                 return {
                     success: true,
                 }
             }
         )
 
-        await this.formVc.setValue('feedback', generateId())
-        await interactor.submitForm(this.formVc)
+        const expected = await this.fillOutFeedback()
+        await this.submit()
 
-        assert.isTrue(wasHit, `Form did not emit submit event`)
+        assert.isEqual(
+            passedFeedback,
+            expected,
+            `The feedback was not passed from the form!`
+        )
+    }
+
+    @test()
+    protected static async submitFeedbackThrowingRendersAlert() {
+        await eventFaker.makeEventThrow(
+            'eightbitstories.submit-feedback::v2024_09_19'
+        )
+
+        await this.fillOutFeedback()
+        await vcAssert.assertRendersAlert(this.vc, () => this.submit())
+        assert.isFalse(
+            this.wasOnSubmitInvoked,
+            `The onSubmit handler should not have been called because there was an error!`
+        )
+    }
+
+    private static async submit() {
+        await interactor.submitForm(this.formVc)
+    }
+
+    private static async fillOutFeedback() {
+        const expected = generateId()
+        await this.formVc.setValue('feedback', expected)
+        return expected
     }
 
     private static get formVc() {
         return this.vc.getFormVc()
-    }
-}
-
-class SpyFeedbackCard extends FeedbackCardViewController {
-    public getFormVc() {
-        return this.formVc
     }
 }

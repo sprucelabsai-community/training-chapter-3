@@ -12,10 +12,14 @@ export default class FeedbackCardViewController extends AbstractViewController<C
     public static id = 'feedback-card'
     private cardVc: CardViewController
     protected formVc: FormViewController<FeedbackFormSchema>
+    private onSubmit: FeedbackSubmitHandler
 
-    public constructor(options: ViewControllerOptions) {
+    public constructor(options: ViewControllerOptions & FeedbackCardOptions) {
         super(options)
 
+        const { onSubmit } = options
+
+        this.onSubmit = onSubmit
         this.formVc = this.FormVc()
         this.cardVc = this.CardVc()
     }
@@ -64,15 +68,27 @@ export default class FeedbackCardViewController extends AbstractViewController<C
     }
 
     private async handleSubmit() {
-        const client = await this.connectToApi()
-        await client.emitAndFlattenResponses(
-            'eightbitstories.submit-feedback::v2024_09_19',
-            {
-                payload: {
-                    feedback: 'aoeuaoeu',
-                },
-            }
-        )
+        const feedback = this.formVc.getValue('feedback')
+
+        try {
+            const client = await this.connectToApi()
+            await client.emitAndFlattenResponses(
+                'eightbitstories.submit-feedback::v2024_09_19',
+                {
+                    payload: {
+                        feedback,
+                    },
+                }
+            )
+            await this.onSubmit()
+        } catch (err: any) {
+            this.log.error('Submitting feedback failed!', err)
+            await this.alert({
+                message:
+                    err.message ??
+                    'Oh no! Submitting feedback failed! Please try again!',
+            })
+        }
     }
 
     public render() {
@@ -92,3 +108,9 @@ const feedbackFormSchema = buildSchema({
 })
 
 type FeedbackFormSchema = typeof feedbackFormSchema
+
+type FeedbackSubmitHandler = () => void | Promise<void>
+
+interface FeedbackCardOptions {
+    onSubmit: FeedbackSubmitHandler
+}
