@@ -49,11 +49,11 @@ export default class RootSkillViewController extends AbstractSkillViewController
     }
 
     private async handleClickFeedback() {
-        this.renderInDialog({
-            header: {
-                title: 'Hello dialog world!',
-            },
-        })
+        const feedbackCardVc = this.Controller(
+            'eightbitstories.feedback-card',
+            {}
+        )
+        this.renderInDialog(feedbackCardVc.render())
     }
 
     public async getIsLoginRequired() {

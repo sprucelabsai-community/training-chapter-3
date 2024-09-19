@@ -7,6 +7,7 @@ import { fake } from '@sprucelabs/spruce-test-fixtures'
 import { AbstractSpruceFixtureTest } from '@sprucelabs/spruce-test-fixtures'
 import { test } from '@sprucelabs/test-utils'
 import RootSkillViewController from '../../skillViewControllers/Root.svc'
+import FeedbackCardViewController from '../../viewControllers/FeedbackCard.vc'
 
 @fake.login()
 export default class RootSkillViewTest extends AbstractSpruceFixtureTest {
@@ -44,9 +45,11 @@ export default class RootSkillViewTest extends AbstractSpruceFixtureTest {
 
     @test()
     protected static async clickingFeedbackRendersDialog() {
-        await vcAssert.assertRendersDialog(this.vc, () =>
+        const dialogVc = await vcAssert.assertRendersDialog(this.vc, () =>
             interactor.clickButton(this.cardVc, 'feedback')
         )
+
+        vcAssert.assertRendersAsInstanceOf(dialogVc, FeedbackCardViewController)
     }
 
     private static get cardVc() {
