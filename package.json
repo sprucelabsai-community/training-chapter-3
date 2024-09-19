@@ -3,7 +3,8 @@
   "description": "Epic bedtime stories for epic families!",
   "version": "0.0.1",
   "skill": {
-    "namespace": "eightbitstories"
+    "namespace": "eightbitstories",
+    "version": "v2024_09_19"
   },
   "homepage": "https://github.com/[YOUR REPO PATH]",
   "bugs": {
