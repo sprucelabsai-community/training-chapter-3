@@ -47,6 +47,7 @@ export default class FeedbackCardViewController extends AbstractViewController<C
             buildForm({
                 schema: feedbackFormSchema,
                 shouldShowCancelButton: false,
+                onSubmit: this.handleSubmit.bind(this),
                 sections: [
                     {
                         fields: [
@@ -59,6 +60,18 @@ export default class FeedbackCardViewController extends AbstractViewController<C
                     },
                 ],
             })
+        )
+    }
+
+    private async handleSubmit() {
+        const client = await this.connectToApi()
+        await client.emitAndFlattenResponses(
+            'eightbitstories.submit-feedback::v2024_09_19',
+            {
+                payload: {
+                    feedback: 'aoeuaoeu',
+                },
+            }
         )
     }
 

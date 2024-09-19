@@ -1,7 +1,7 @@
-import { formAssert } from '@sprucelabs/heartwood-view-controllers'
-import { fake } from '@sprucelabs/spruce-test-fixtures'
+import { formAssert, interactor } from '@sprucelabs/heartwood-view-controllers'
+import { eventFaker, fake } from '@sprucelabs/spruce-test-fixtures'
 import { AbstractSpruceFixtureTest } from '@sprucelabs/spruce-test-fixtures'
-import { assert, test } from '@sprucelabs/test-utils'
+import { assert, generateId, test } from '@sprucelabs/test-utils'
 import FeedbackCardViewController from '../../../viewControllers/FeedbackCard.vc'
 
 @fake.login()
@@ -42,6 +42,25 @@ export default class FeedbackCardTest extends AbstractSpruceFixtureTest {
             this.formVc.getShouldRenderCancelButton(),
             `You should not be rendering the cancel button!`
         )
+    }
+
+    @test()
+    protected static async submittingFormEmitsSubmitFeedbackEvent() {
+        let wasHit = false
+        await eventFaker.on(
+            'eightbitstories.submit-feedback::v2024_09_19',
+            () => {
+                wasHit = true
+                return {
+                    success: true,
+                }
+            }
+        )
+
+        await this.formVc.setValue('feedback', generateId())
+        await interactor.submitForm(this.formVc)
+
+        assert.isTrue(wasHit, `Form did not emit submit event`)
     }
 
     private static get formVc() {
