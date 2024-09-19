@@ -1,11 +1,11 @@
 import { formAssert, vcAssert } from '@sprucelabs/heartwood-view-controllers'
 import { eventFaker, fake } from '@sprucelabs/spruce-test-fixtures'
-import { AbstractSpruceFixtureTest } from '@sprucelabs/spruce-test-fixtures'
 import { assert, test } from '@sprucelabs/test-utils'
+import AbstracteightBitTest from '../../support/AbstractEightBitTest'
 import SpyFeedbackCard from './SpyFeedbackCard'
 
 @fake.login()
-export default class FeedbackCardTest extends AbstractSpruceFixtureTest {
+export default class FeedbackCardTest extends AbstracteightBitTest {
     private static vc: SpyFeedbackCard
     private static wasOnSubmitInvoked: boolean
 
@@ -52,16 +52,13 @@ export default class FeedbackCardTest extends AbstractSpruceFixtureTest {
     protected static async submittingFormEmitsSubmitFeedbackEvent() {
         let passedFeedback: string | undefined
 
-        await eventFaker.on(
-            'eightbitstories.submit-feedback::v2024_09_19',
-            ({ payload }) => {
-                const { feedback } = payload
-                passedFeedback = feedback
-                return {
-                    success: true,
-                }
+        await this.eventFaker.fakeSubmitFeedback(({ payload }) => {
+            const { feedback } = payload
+            passedFeedback = feedback
+            return {
+                success: true,
             }
-        )
+        })
 
         const expected = await this.fillOutFeedback()
         await this.submit()

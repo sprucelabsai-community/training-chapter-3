@@ -3,28 +3,21 @@ import {
     interactor,
     vcAssert,
 } from '@sprucelabs/heartwood-view-controllers'
-import { eventFaker, fake } from '@sprucelabs/spruce-test-fixtures'
-import { AbstractSpruceFixtureTest } from '@sprucelabs/spruce-test-fixtures'
+import { fake } from '@sprucelabs/spruce-test-fixtures'
 import { assert, test } from '@sprucelabs/test-utils'
 import FeedbackCardViewController from '../../feedback/FeedbackCard.vc'
 import RootSkillViewController from '../../skillViewControllers/Root.svc'
+import AbstracteightBitTest from '../support/AbstractEightBitTest'
 import SpyFeedbackCard from './feedback/SpyFeedbackCard'
 
 @fake.login()
-export default class RootSkillViewTest extends AbstractSpruceFixtureTest {
+export default class RootSkillViewTest extends AbstracteightBitTest {
     private static vc: SpyRootSkillView
 
     protected static async beforeEach(): Promise<void> {
         await super.beforeEach()
 
-        await eventFaker.on(
-            'eightbitstories.submit-feedback::v2024_09_19',
-            () => {
-                return {
-                    success: true,
-                }
-            }
-        )
+        await this.eventFaker.fakeSubmitFeedback()
 
         this.views.setController(
             'eightbitstories.feedback-card',
