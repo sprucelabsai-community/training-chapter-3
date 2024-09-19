@@ -1,4 +1,7 @@
-import { EventSignature } from '@sprucelabs/mercury-types'
+import {
+    buildPermissionReference,
+    EventSignature,
+} from '@sprucelabs/mercury-types'
 import '#spruce/permissions/permissions.types'
 import '@sprucelabs/mercury-core-events'
 
@@ -12,6 +15,10 @@ type Options = Omit<
 
 const eventOptions: Options = {
     isGlobal: true,
+    emitPermissions: buildPermissionReference(
+        'eightbitstories.eightbitstories',
+        ['can-submit-feedback']
+    ),
 }
 
 export default eventOptions

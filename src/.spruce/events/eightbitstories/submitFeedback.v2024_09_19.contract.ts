@@ -8,7 +8,7 @@ const submitFeedbackEventContract = buildEventContract({
     eventSignatures: {
         'eightbitstories.submit-feedback::v2024_09_19': {
             isGlobal: true,
-            
+            emitPermissions: {"contractId":"eightbitstories.eightbitstories","permissionIdsAny":["can-submit-feedback"]},
             
             emitPayloadSchema: submitFeedbackEmitTargetAndPayloadSchema,
             responsePayloadSchema: submitFeedbackResponsePayloadSchema,
