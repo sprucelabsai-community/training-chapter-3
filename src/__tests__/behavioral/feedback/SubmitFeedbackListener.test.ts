@@ -26,6 +26,7 @@ export default class SubmitFeedbackListenerTest extends AbstractEightBitTest {
             this.wasHit = true
         })
 
+        process.env.FEEDBACK_PHONE = '555-000-0000'
         await this.bootSkill()
     }
 

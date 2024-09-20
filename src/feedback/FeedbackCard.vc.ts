@@ -71,6 +71,7 @@ export default class FeedbackCardViewController extends AbstractViewController<C
         const feedback = this.formVc.getValue('feedback')
 
         try {
+            this.cardVc.setIsBusy(true)
             const client = await this.connectToApi()
             await client.emitAndFlattenResponses(
                 'eightbitstories.submit-feedback::v2024_09_19',
@@ -80,6 +81,11 @@ export default class FeedbackCardViewController extends AbstractViewController<C
                     },
                 }
             )
+            await this.alert({
+                title: 'Feedback submitted',
+                message: 'Thank you so much!',
+                style: 'success',
+            })
             await this.onSubmit()
         } catch (err: any) {
             this.log.error('Submitting feedback failed!', err)
@@ -89,6 +95,8 @@ export default class FeedbackCardViewController extends AbstractViewController<C
                     'Oh no! Submitting feedback failed! Please try again!',
             })
         }
+
+        this.cardVc.setIsBusy(false)
     }
 
     public render() {
