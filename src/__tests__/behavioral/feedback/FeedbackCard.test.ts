@@ -1,11 +1,11 @@
 import { formAssert, vcAssert } from '@sprucelabs/heartwood-view-controllers'
 import { eventFaker, fake } from '@sprucelabs/spruce-test-fixtures'
 import { assert, test } from '@sprucelabs/test-utils'
-import AbstracteightBitTest from '../../support/AbstractEightBitTest'
+import AbstractEightBitTest from '../../support/AbstractEightBitTest'
 import SpyFeedbackCard from './SpyFeedbackCard'
 
 @fake.login()
-export default class FeedbackCardTest extends AbstracteightBitTest {
+export default class FeedbackCardTest extends AbstractEightBitTest {
     private static vc: SpyFeedbackCard
     private static wasOnSubmitInvoked: boolean
 

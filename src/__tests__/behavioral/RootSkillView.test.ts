@@ -7,11 +7,11 @@ import { fake } from '@sprucelabs/spruce-test-fixtures'
 import { assert, test } from '@sprucelabs/test-utils'
 import FeedbackCardViewController from '../../feedback/FeedbackCard.vc'
 import RootSkillViewController from '../../skillViewControllers/Root.svc'
-import AbstracteightBitTest from '../support/AbstractEightBitTest'
+import AbstractEightBitTest from '../support/AbstractEightBitTest'
 import SpyFeedbackCard from './feedback/SpyFeedbackCard'
 
 @fake.login()
-export default class RootSkillViewTest extends AbstracteightBitTest {
+export default class RootSkillViewTest extends AbstractEightBitTest {
     private static vc: SpyRootSkillView
 
     protected static async beforeEach(): Promise<void> {
